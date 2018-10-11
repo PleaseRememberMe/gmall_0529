@@ -9,5 +9,5 @@ public class BaseAttrInfo extends SuperBean{
 
     private Integer catalog3Id;
 
-    private String isEnabled;
+
 }

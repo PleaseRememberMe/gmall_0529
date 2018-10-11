@@ -15,3 +15,5 @@ public class AttrManagerController {
         return "attr/attrListPage";
     }
 }
+
+
