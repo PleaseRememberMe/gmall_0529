@@ -1,27 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 
-        <div id="dlg" class="easyui-dialog" title="编辑属性" style="width:600px;height:500px;"
+        <div id="attrDlg" class="easyui-dialog" title="编辑属性" style="width:600px;height:500px;"
              closed="true" data-options="iconCls:'icon-save',resizable:true,modal:true" buttons="#bb" >
             <form id="attrForm">
                 <br/>
                 <label>属性名称:</label>
                 <input  id="attrName" name="attrName" class="easyui-textbox" data-options="" style="width:100px"/>
-                <input  id="attrId" name="attrId" type="hidden"  />
+                <input  id="attrId" name="id" type="hidden"  />
                 <br/><br/>
-                <table id="dg_av" class="easyui-datagrid" title="属性值列表"></table>
+
+
+                <!--平台属性值列表-->
+                <table id="attrInfoValueTable" class="easyui-datagrid" title="属性值列表">
+
+
+                </table>
             </form>
         </div>
 
         <div id="bb">
-            <a href="#" class="easyui-linkbutton" onclick="saveAttr()">保存</a>
-            <a href="#" class="easyui-linkbutton" onclick="javascript:$('#dlg').dialog('close')">关闭</a>
+            <a href="#" class="easyui-linkbutton" onclick="saveAttrInfoAndValue()">保存</a>
+            <a href="#" class="easyui-linkbutton" onclick="$('#attrDlg').dialog('close')" >关闭</a>
         </div>
+
+
+        <script language="javascript">
+            /*<![CDATA[*/
+
+
+          //保存属性名以及他对象的属性值
+        function saveAttrInfoAndValue() {
+            var attrInfoAndValue={}//js对象
+
+
+            //1、获取到页面的所有相关数据
+            //1）、获取基本属性的id和name
+            attrInfoAndValue.id=$("#attrId").val();
+
+
+
+            // 如果用getValue，当第一次在数据库新建属性名的时，
+            // 直接在页面不修改属性名提交保存会丢失属性名，
+            // 并且之后的会覆盖之前的属性名，如果一直不该动属性名的话
+            // 用$("#attrName").clear();会清空，会出现没有属性名的现象
+
+            attrInfoAndValue.attrName=$("#attrName").textbox('getValue');
+
+
+
+
+            //2）、获取基本属性的所有的值
+            attrInfoAndValue.attrValues=$("#attrInfoValueTable").datagrid('getRows');
+
+            //页面要提交json数据给springmvc
+            //1）、将js对象转为json字符串
+            var jsonStr=JSON.stringify(attrInfoAndValue);
+            //2）、使用ajax提交即可
+            $.ajax({
+                url:'attr/updates',
+                type:'POST',//必须是post
+                contentType:'application/json',//必须写,
+                data:jsonStr,//把json字符串发出去
+                processData:false ,//不默认处理数据，否则数据就变成了k=v方式
+                success:function (data) {
+                    //保存成功。关闭对话框
+                    $("#attrDlg").dialog('close');
+                    //刷新表格
+                    refreshTable();
+                    $.messager.alert("成功","恭喜你，数据保存成功")
+                },
+                error:function () {
+                    alert("服务器炸了...")
+                },
+
+            })
+
+
+
+            }
+
+
+
+
+
+
+
+            //双击编辑功能
+            var editIndex = undefined;
+            function endEditing(){
+                if (editIndex == undefined){return true}
+                if ($('#attrInfoValueTable').datagrid('validateRow', editIndex)){
+                    $('#attrInfoValueTable').datagrid('endEdit', editIndex);
+                    editIndex = undefined;
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            function onClickCell(index, field){
+                if (endEditing()){
+                    $('#attrInfoValueTable').datagrid('selectRow', index)
+                        .datagrid('editCell', {index:index,field:field});
+                    editIndex = index;
+                }
+            }
+
+
+
+            /*]]>*/
+        </script>
+
 
 </body>
 </html>
