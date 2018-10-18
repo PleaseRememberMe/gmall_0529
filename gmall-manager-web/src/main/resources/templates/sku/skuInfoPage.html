@@ -42,7 +42,7 @@
         <!----------------商品图片列表 ----------------------->
 
         <table id="skuImgDg" class="easyui-datagrid" title="商品图片列表"
-               data-options="singleSelect:false,selectOnCheck:false,method:'get'">
+               data-options="singleSelect:false,selectOnCheck:false,checkOnSelect:false,method:'get',idField:'id'">
 
             <thead>
                 <tr>
@@ -73,12 +73,104 @@
 
 
 <script th:inline="javascript">
+    //sku的大保存
+    function saveSku() {
+        var bigSku={};
+        bigSku.catalog3Id=getSpuCatalog3Info().id;
+        bigSku.price=$("#price").numberbox('getValue');
+        bigSku.skuDefaultImg="";//先赋值为空串
+        //找到表格中被选中的radio组件
+        if($(".imgRadio:checked").length==0){
+            $.messager.alert("错误","请先选中一个默认图片");
+            return ;
+        }else{
+            bigSku.skuDefaultImg=$(".imgRadio:checked").parents("tr").find("td[field='imgUrl']").find("img").attr("src");
+            console.log($(".imgRadio:checked"));
+        }
+        bigSku.skuDesc=$("#skuDesc").textbox("getValue");
+        bigSku.spuId=getSelectedSpuInfoRow().id;
+        bigSku.skuName=$("#skuName").textbox("getValue");
+        bigSku.weight=$("#weight").textbox("getValue");
+        bigSku.skuImages=getSelectedSkuImages();
+        bigSku.skuAttrValues=getSelectedSkuAttrValues();
+        bigSku.skuSaleAttrValues=getSelectedSkuSaleAttrValues();
+        console.log(bigSku);
+
+        $.ajax({
+            url:'sku/bigsave',
+            data:JSON.stringify(bigSku),
+            type:'POST',
+            contentType:"application/json",
+            processData:false,
+            success:function (data) {
+                $.messager.alert("成功","信息保存成功了");
+                $("#sku_dlg").dialog("close");
+            },
+            error:function () {
+                $.messager.alert("错误","信息保存失败了");
+            }
+        });
+
+
+    }
+
+    //返回所有的平台属性选中的值信息
+    function getSelectedSkuAttrValues() {
+        var skuAttrValues=new Array();
+        //先找到平台属性的大label
+        $.each($(".infoGroupLabel"),function () {
+            var obj={};
+            obj.attrId=$(this).find("label[attrid]").attr("attrid")//dom元素
+            obj.valueId=$(this).find("option:selected").val();
+            skuAttrValues.push(obj);
+        })
+        return skuAttrValues;
+    }
+
+    //返回所有的销售属性选中的值的信息
+    function getSelectedSkuSaleAttrValues() {
+        var skuSaleAttrValuesArray=new Array();
+
+        $.each($(".attrValueGroupLabel"),function () {
+            var obj={};
+            obj.saleAttrId=$(this).find("label[attrid]").attr("attrid")//dom元素
+            obj.saleAttrName=$(this).find("label[attrid]").text();
+            obj.saleAttrValueId=$(this).find("option:selected").val();
+            obj.saleAttrValueName=$(this).find("option:selected").text();
+            skuSaleAttrValuesArray.push(obj);
+        })
+        return skuSaleAttrValuesArray;
+    }
+    
+    
+    
+
+    //返回所有图片
+    function getSelectedSkuImages() {
+       var imgs= $("#skuImgDg").datagrid("getChecked");
+       var imgsResult=new Array();
+       $.each(imgs,function () {
+           var imgObj={};
+           imgObj.imgName=this.imgName;
+           imgObj.imgUrl=this.imgUrl;
+           imgObj.spuImgId=this.id;
+           //查到这一行的的radio是否被勾选
+           imgObj.isDefault=$("td[field='id']:contains("+imgObj.spuImgId+")").parents("tr")
+               .find("input[type='radio']:checked").length;
+           imgsResult.push(imgObj);
+       })
+        console.log(imgsResult);
+        return imgsResult;
+    }
+
+
+    
     //是否默认图片格式化选择
    function skuImageCheckCellFormatter(value,row,index) {
        if(value == 1){
-           return "<input name='isDefault' type='radio' checked/>";
+           return "<input class='imgRadio' name='isDefault' type='radio' checked/>";
        }else{
-           return "<input name='isDefault' type='radio'/>";
+           return "<input class='imgRadio' name='isDefault' type='radio'/>";
        }
    }
    function skuImageInfoShowFormatter(value,row,index) {

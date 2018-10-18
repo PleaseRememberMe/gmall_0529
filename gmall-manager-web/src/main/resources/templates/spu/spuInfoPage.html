@@ -100,10 +100,15 @@
 //        private List<SpuSaleAttr> spuSaleAttrs ;//spu所有销售以对应的
 
         var spuName=$("#spuName").textbox('getValue');
+        //清除表单数据
+        $("#spuName").textbox('clear');
         var description=$("#description").textbox('getValue');
+        $("#description").textbox('clear');
         var catalog3Id=getSpuCatalog3Info().id;
         var spuImages=$("#spuImgDg").datagrid('getRows');
+      //  $("#spuImgDg").datagrid('reset');
         var spuSaleAttrs=$("#spuSaleAttrDg").datagrid('getRows');
+       //  $("#spuSaleAttrDg").datagrid('reset');
 
         //加工spuImages
         $.each(spuImages,function () {

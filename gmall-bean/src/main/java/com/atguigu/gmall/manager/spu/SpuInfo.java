@@ -15,7 +15,7 @@ public class SpuInfo extends SuperBean {
     private String spuName;//商品名字
     private String description;//描述
     private Integer catalog3Id;//三级分类id
-   // private Integer tmId; //品牌id
+    private Integer tmId; //品牌id
 
 
     @TableField(exist = false)
