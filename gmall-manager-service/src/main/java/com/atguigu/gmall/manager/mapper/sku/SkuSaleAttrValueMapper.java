@@ -1,6 +1,7 @@
 package com.atguigu.gmall.manager.mapper.sku;
 
 import com.atguigu.gmall.manager.sku.SkuAllSaveAttrAndValueTo;
+import com.atguigu.gmall.manager.sku.SkuAttrValueMappingTo;
 import com.atguigu.gmall.manager.sku.SkuSaleAttrValue;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,4 +17,7 @@ public interface SkuSaleAttrValueMapper extends BaseMapper<SkuSaleAttrValue> {
      * @return
      */
     List<SkuAllSaveAttrAndValueTo> getSkuAllSaveAttrAndValue(@Param("id") Integer skuId,@Param("spuId") Integer spuId);
+
+
+    List<SkuAttrValueMappingTo> getSkuAttrValueMapping(Integer spuId);
 }

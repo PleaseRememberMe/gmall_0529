@@ -7,7 +7,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.junit4.SpringRunner;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.util.List;
 
@@ -30,6 +34,32 @@ public class GmallManagerServiceApplicationTests {
 
 	@Autowired
 	BaseAttrInfoService baseAttrInfoService;
+
+
+	@Autowired
+	StringRedisTemplate stringRedisTemplate; //k_v都是string
+
+	@Autowired
+	JedisPool jedisPool;
+
+	@Test
+	public void testJedisPool(){
+		Jedis resource = jedisPool.getResource();
+		resource.set("sdf","fsfsdf");
+	}
+
+
+
+
+	@Test
+	public void testRedisTemplate(){
+		ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
+		opsForValue.set("hello","stit");
+		System.out.println("6666");
+		String hello = opsForValue.get("hello");
+		System.out.println("得到的值是;"+hello);
+	}
+
 
 	@Test
 	public void testBaseAttrInfoService(){

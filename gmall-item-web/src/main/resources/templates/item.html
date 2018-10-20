@@ -219,8 +219,8 @@
 							<div th:each="saleAttr:${skuInfo.skuAllSaveAttrAndValueTos}" class="box-attr-2 clear">
 								<dl>
 									<dt th:text="${saleAttr.saleAttrName}">选择颜色</dt>
-
-									<dd th:each="v:${saleAttr.valueContent}" th:class="${v.isCheck==1?'redborder':''}">
+									<!--为了方便期间遍历的时候把销售属性值的id也放在这个dd-->
+									<dd th:value="${v.saleAttrValueId}" th:each="v:${saleAttr.valueContent}" th:class="${v.isCheck==1?'redborder':''}">
 										<div th:text="${v.saleAttrValueName}">
 											摩卡金
 										</div>
@@ -228,13 +228,13 @@
 								</dl>
 							</div>
 							<br/>
+
+							<div>
+								<input th:name="${valueMapping.saleAttrValueIdMapping}" name="124,122"
+									   th:value="${valueMapping.skuId}" value="55" type="hidden"
+									   th:each="valueMapping:${skuAttrValueMappingTos}"/>
+							</div>
 						</div>
-
-
-
-
-
-
 
 						<div class="box-btns clear">
 							<div class="box-btns-one">

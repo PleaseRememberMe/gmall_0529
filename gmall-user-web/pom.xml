@@ -27,6 +27,24 @@
             <artifactId>gmall-interface</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
+        <!--引着玩的
+            防止报错！！！！！！！！！！！！！！！
+        -->
+        <dependency>
+            <groupId>io.searchbox</groupId>
+            <artifactId>jest</artifactId>
+        </dependency>
+
+        <!--引着玩的
+            防止报错！！！！！！！！！！！！！！！
+        -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+        </dependency>
+
+
     </dependencies>
 
 

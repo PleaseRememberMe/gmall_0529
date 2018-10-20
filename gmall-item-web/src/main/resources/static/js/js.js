@@ -54,11 +54,24 @@ $(function(){
 			})
 		});
 
-
-
-	
+		/**
+		 * 1.后台告诉每一组销售属性值的id对应的skuId是多少
+		 * 2.页面找到saleAttrValueId的组合找到skuId
+		 * 3.跳转到skuid的页面
+		 */
 	    function switchSkuId() {
-		 
+		 		var ids=new Array();
+		 		$.each($("dd.redborder"),function () {
+					ids.push($(this).attr('value'))
+                })
+			  ids=ids.reverse()//反转
+			  var idsStr=ids.join(",")//分割
+            var skuId = $("input[name='"+idsStr+"']").val();
+		 		if(skuId==undefined){
+		 			return;
+				}else{
+		 			location.href='/'+skuId+".html";
+				}
         }
 
 
