@@ -28,6 +28,7 @@
 
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editSkuInfo()">编辑</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addOnSale()">上架</a>
         </div>
         <input id="spuIdForSkuList" name="spuIdForSkuId" type="hidden"/>
         <input id="catalog3IdForSkuList" name="catalog3IdForSkuId" type="hidden"/>
@@ -39,7 +40,23 @@
 
 </body>
 <script language="JavaScript">
+    //上架功能
+    function addOnSale() {
+        var skuId=getSelectedSkuInfoRow().id;
+        $.ajax({
+            url:'sku/onSale?skuId='+skuId,
+            success:function (data) {
+                $.messager.alert("成功","上架成功了");
+            },
+            error:function () {
+                $.messager.alert("错误","上架失败了");
+            }
+        });
+    }
 
+    function getSelectedSkuInfoRow() {
+        return $("#skulist_dg").datagrid('getSelected');
+    }
 
 </script>
 </html>

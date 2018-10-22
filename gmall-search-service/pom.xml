@@ -12,10 +12,9 @@
 	<description>gamll检索模块用的es技术</description>
 
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.17.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<groupId>com.atguigu.gmall</groupId>
+		<artifactId>gmall-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -26,14 +25,34 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<groupId>com.atguigu.gmall</groupId>
+			<artifactId>gmall-serviceutil</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.atguigu.gmall</groupId>
+			<artifactId>gmall-interface</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<!--依赖es组件-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+			<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+		</dependency>
+
+
+		<!--jest所有配置-->
+		<!--自己导入jest相关依赖-->
+		<!-- https://mvnrepository.com/artifact/io.searchbox/jest -->
+		<dependency>
+			<groupId>io.searchbox</groupId>
+			<artifactId>jest</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna -->
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
 		</dependency>
 	</dependencies>
 

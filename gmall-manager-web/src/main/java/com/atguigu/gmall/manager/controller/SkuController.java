@@ -3,6 +3,7 @@ package com.atguigu.gmall.manager.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.atguigu.gmall.manager.BaseAttrInfo;
+import com.atguigu.gmall.manager.SkuEsService;
 import com.atguigu.gmall.manager.SkuService;
 import com.atguigu.gmall.manager.SpuInfoService;
 import com.atguigu.gmall.manager.sku.SkuInfo;
@@ -28,6 +29,24 @@ public class SkuController {
 
     @Reference
     SpuInfoService spuInfoService;
+
+
+    @Reference
+    SkuEsService skuEsService;
+    /**
+     * 传入一个skuId将这个商品上架，缓存到es中
+     * @param skuId
+     * @return
+     */
+    @RequestMapping("/onSale")
+    public String onSale(@RequestParam("skuId")Integer skuId){
+        skuEsService.onSale(skuId);
+        return  "ok";
+    }
+
+
+
+
 
     @RequestMapping("/skuinfo")
     public List<SkuInfo> getSkuInfoBySpuId(@RequestParam("id") Integer spuId){
