@@ -1,8 +1,10 @@
 package com.atguigu.gmall.manager.service.impl;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.manager.BaseAttrInfo;
+import com.atguigu.gmall.manager.SkuEsService;
 import com.atguigu.gmall.manager.SkuService;
 import com.atguigu.gmall.manager.constant.RedisCacheKeyConst;
 import com.atguigu.gmall.manager.es.SkuBaseAttrEsVo;
@@ -17,6 +19,7 @@ import com.atguigu.gmall.manager.spu.SpuSaleAttr;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -29,6 +32,9 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class SkuServiceImpl implements SkuService {
+
+    @Reference
+    SkuEsService skuEsService;
 
     @Autowired
     BaseAttrInfoMapper baseAttrInfoMapper;
@@ -166,6 +172,7 @@ public class SkuServiceImpl implements SkuService {
             jedis.close();
             return  result;
         }
+        jedis.close();
         return null;
     }
 
@@ -186,6 +193,23 @@ public class SkuServiceImpl implements SkuService {
             result.add(skuBaseAttrEsVo);
         }
         return result;
+    }
+
+    @Override
+    public List<BaseAttrInfo> getSkuBaseAttrInfoGroupByValueId(List<Integer> valueIds) {
+        return baseAttrInfoMapper.getSkuBaseAttrInfoGroupByValueId(valueIds);
+    }
+
+    //增加商品热度信息
+    @Async //异步增加不用等待
+    @Override
+    public void incrSkuHotScore(Integer skuId) {
+        Jedis jedis = jedisPool.getResource();
+        Long hincrBy = jedis.hincrBy(RedisCacheKeyConst.SKU_HOT_SCORE, skuId + "", 1);
+        if(hincrBy % 3 ==0){
+            //更新ES的热度
+            skuEsService.updateHotScore(skuId,hincrBy);
+        }
     }
 
     private SkuInfo getFromDb(Integer skuId){
