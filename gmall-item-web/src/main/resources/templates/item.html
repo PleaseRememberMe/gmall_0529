@@ -238,9 +238,9 @@
 
 						<div class="box-btns clear">
 							<div class="box-btns-one">
-								<form id="itemForm" action="http://cart.gmall.com/addToCart" method="post">
-								<input type="text" name="num" id="" value="1" />
-								<input type="hidden" name="skuId"   />
+								<form id="itemForm" action="http://cart.gmall.com:8095/addToCart" method="post">
+								<input type="text" name="num" id="numInput" value="1" />
+								<input type="hidden" name="skuId" id="skuIdInput" th:value="${skuInfo.id}"  />
 
 								<div class="box-btns-one1">
 
@@ -989,7 +989,11 @@
 	<script src="/js/js.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
 		function addToCart(){
-		    $("#itemForm").submit();
+            var skuId=$("#skuIdInput").val();
+            var num=$("#numInput").val();
+		   var url="http://cart.gmall.com:8095/addToCart?skuId="+skuId+"&num="+num;
+
+		   location.href=url;
 		}
 	</script>
 

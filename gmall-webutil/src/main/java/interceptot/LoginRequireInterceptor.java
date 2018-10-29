@@ -33,6 +33,9 @@ public class LoginRequireInterceptor implements HandlerInterceptor{
             String token = request.getParameter("token");
             String cookieValue = CookieUtils.getCookieValue(request, CookieConstant.SSO_COOKIE_NAME);
 
+            //获取是否需要一定登录
+            boolean needLogin=annotion.needLogin();
+
             if(!StringUtils.isEmpty(token)){
 
                 //只要参数有说明登录成功了，我们要设置这个cookie
@@ -50,13 +53,27 @@ public class LoginRequireInterceptor implements HandlerInterceptor{
                     //验证通过放行方法
                     Cookie cookie = new Cookie(CookieConstant.SSO_COOKIE_NAME, token);
                     cookie.setPath("/");
+                    //只要有一个人登录成功了，和他同域的子系统都不用登录，只需要放大cookie的作用域
+                    //最大只能放到二级域名
+                    cookie.setDomain("gmall.com");
                     response.addCookie(cookie);
+
+                    //把用户的信息也放上
+                    Map<String, Object> map = CookieUtils.resolveTokenData(token);
+                    //解好以后将用户信息放到请求域中，当次请求就能用了
+                    request.setAttribute(CookieConstant.LOGIN_USER_INFO_KEY,map);
+
+
                     return  true;
                 }else{
                     //验证失败，重新去登录
-                    String redirectUrl="http://www.gmallsso.com:8110/login?originUrl="+request.getRequestURL();
-                    response.sendRedirect(redirectUrl);
-                    return  false;
+
+                    if (needLogin == true){ //需要登录的时候在重定向去登录，不需要直接放行
+                        String redirectUrl="http://www.gmallsso.com:8110/login?originUrl="+request.getRequestURL();
+                        response.sendRedirect(redirectUrl);
+                        return  false;
+                    }
+                    return  true;
                 }
 
             }
@@ -75,20 +92,26 @@ public class LoginRequireInterceptor implements HandlerInterceptor{
                 if(result.equals("ok")){
                     //验证通过放行方法
                     Map<String, Object> map = CookieUtils.resolveTokenData(cookieValue);
-                    request.setAttribute("userInfo",map);
+                    request.setAttribute(CookieConstant.LOGIN_USER_INFO_KEY,map);
                     return  true;
                 }else{
                     //验证失败，重新去登录
-                    String redirectUrl="http://www.gmallsso.com:8110/login?originUrl="+request.getRequestURL();
-                    response.sendRedirect(redirectUrl);
-                    return  false;
+                    if(needLogin == true){
+                        String redirectUrl="http://www.gmallsso.com:8110/login?originUrl="+request.getRequestURL();
+                        response.sendRedirect(redirectUrl);
+                        return  false;
+                    }
+                    return  true;
                 }
             }
             //两个都没有
             if(StringUtils.isEmpty(token) &&StringUtils.isEmpty(cookieValue)){
-                String redirectUrl="http://www.gmallsso.com:8110/login?originUrl="+request.getRequestURL();
-                response.sendRedirect(redirectUrl);
-                return  false;
+               if(needLogin == true){
+                   String redirectUrl="http://www.gmallsso.com:8110/login?originUrl="+request.getRequestURL();
+                   response.sendRedirect(redirectUrl);
+                   return  false;
+               }
+               return  true;
             }
         }else {
             //没有标注注解直接放行
