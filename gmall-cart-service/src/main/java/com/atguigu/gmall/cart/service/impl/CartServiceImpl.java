@@ -7,7 +7,7 @@ import com.atguigu.gmall.cart.CartItem;
 import com.atguigu.gmall.cart.CartService;
 import com.atguigu.gmall.cart.CartVo;
 import com.atguigu.gmall.cart.SkuItem;
-import com.atguigu.gmall.cart.constant.CartConstant;
+import com.atguigu.gmall.constant.CartConstant;
 import com.atguigu.gmall.manager.SkuService;
 import com.atguigu.gmall.manager.sku.SkuInfo;
 import org.springframework.beans.BeanUtils;
@@ -151,6 +151,53 @@ public class CartServiceImpl implements CartService {
 //        }
 
         return cartItemList;
+    }
+
+    /**
+     * 勾选某个商品
+     * @param skuId 商品id
+     * @param checkFlag 是否勾选
+     * @param tempCartKey 临时购物车id
+     * @param userId  用户id
+     * @param loginFlag 是否登录
+     */
+    @Override
+    public void checkItem(Integer skuId, Boolean checkFlag, String tempCartKey, int userId, boolean loginFlag) {
+        //购物车勾选
+        String cartKey=loginFlag?CartConstant.USER_CART_PREFIX+userId:tempCartKey;
+        CartItem cartItem = getCartItemInfo(cartKey, skuId);
+        //设置勾选状态
+        cartItem.setCheck(checkFlag);
+        //修改购物车数据
+        String jsonString = JSON.toJSONString(cartItem);
+        Jedis jedis = jedisPool.getResource();
+        jedis.hset(cartKey,skuId+"",jsonString);
+        jedis.close();
+    }
+
+    @Override
+    public List<CartItem> getCartInfoCheckedList(int id) {
+        Jedis jedis = jedisPool.getResource();
+        String cartKey=CartConstant.USER_CART_PREFIX+id;
+        //1、获取购物车所有商品
+        Map<String, String> stringMap = jedis.hgetAll(cartKey);
+        //2.保存所有被选中的项目
+        List<CartItem> checkedItems=new ArrayList<>();
+        List<CartItem> cartInfoList = getCartInfoList(id+"", true);//老师写的是id
+        if (cartInfoList==null){
+            return  null;
+        }
+        for (CartItem cartItem : cartInfoList) {
+            if(cartItem.isCheck()){
+                checkedItems.add(cartItem);
+            }
+        }
+        //返回被候选的
+        if (checkedItems.size()==0){
+            return  null;
+        }
+        jedis.close();
+        return checkedItems;
     }
 
     /**

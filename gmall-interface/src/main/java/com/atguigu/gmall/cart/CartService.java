@@ -56,4 +56,21 @@ public interface CartService {
      * @return
      */
     List<CartItem> getCartInfoList(String cartKey, boolean login);
+
+    /**
+     * 勾选某个商品
+     * @param skuId 商品id
+     * @param checkFlag 是否勾选
+     * @param tempCartKey 临时购物车id
+     * @param userId  用户id
+     * @param loginFlag 是否登录
+     */
+    void checkItem(Integer skuId, Boolean checkFlag, String tempCartKey, int userId, boolean loginFlag);
+
+    /**
+     * 返回购物车被选中的商品
+     * @param id 用户id
+     * @return
+     */
+    List<CartItem> getCartInfoCheckedList(int id);
 }

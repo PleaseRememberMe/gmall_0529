@@ -24,9 +24,9 @@
             </ul>
             <ul class="header-right">
                 <li><a href="../登录页面\index.html" style="color: red;"
-                th:if="${userInfo==null}">你好，请登录</a></li>
+                       th:if="${userInfo == null}">你好，请登录</a></li>
                 <li><a href="../登录页面\index.html" style="color: red;"
-                       th:if="${userInfo!=null}" th:text="${userInfo.nickName}">你好，请登录</a></li>
+                       th:if="${userInfo != null}" th:text="${userInfo.nickName}">你好，请登录</a></li>
                 <li><a href="../注册页面\index.html" >免费注册</a></li>
                 <li class="spacer"></li>
                 <li><a href="">我的订单</a></li>
@@ -55,10 +55,13 @@
                 <input type="button" value="搜索" class="one_right_btn">
             </div>
         </div>
-        <div class="one_search_load"  th:if="${userInfo==null}"  >
+
+
+        <div class="one_search_load"   th:if="${userInfo==null}" >
             <img src="./img/shop_07.jpg" class="one_load_wraing">
             <span>您还没有登录！登录后购物车的商品将保存到您账号中</span>
-            <a href="#"><input type="button" onclick="login()" value="立即登录" class="one_load_btn"></a>
+            <a href="#"><input type="button" onclick="login()"
+                               value="立即登录" class="one_load_btn"></a>
         </div>
     </div>
 </div>
@@ -84,22 +87,27 @@
 
         <div class="One_ShopCon">
             <ul>
-                <li th:each="cartItem:${cartVo.cartItems}" >
+                <li th:each="cartItem:${cartVo.cartItems}"  >
                     <div> </div>
 
                     <div>
                         <ol>
-                            <li><input type="checkbox"   class="check"   onchange="checkSku(this)"  /></li>
                             <li>
-                                <dt><img th:src="${cartItem.skuItem.skuDefaultImg}"  src="img\shop1.jpg" alt=""></dt>
-                                <dd  onclick="toItem(1)">
+                                <input type="checkbox"
+                                       class="check"
+                                       th:checked="${cartItem.check}"
+                                       th:onchange="'checkSku('+${cartItem.skuItem.id}+',this)'" /></li>
+                            <li>
+                                <dt><img th:src="${cartItem.skuItem.skuDefaultImg}"
+                                         src="img\shop1.jpg" alt=""></dt>
+                                <dd  th:onclick="'toItem('+${cartItem.skuItem.id}+')'">
                                     <p>
-                                        <span th:text="${cartItem.skuItem.skuName}" >TCL 55A950C 55英寸32核</span>
+                                        <span  th:text="${cartItem.skuItem.skuName}">TCL 55A950C 55英寸32核</span>
                                     </p>
                                 </dd>
                             </li>
                             <li>
-                                <p class="dj" th:text="'￥'+${cartItem.skuItem.price}"  >￥4599.00</p>
+                                <p class="dj"  th:text="'￥'+${cartItem.skuItem.price}">￥4599.00</p>
                             </li>
                             <li>
                                 <p>
@@ -108,14 +116,13 @@
                                     <span>+</span>
                                 </p>
                             </li>
-                            <li style="font-weight:bold"><p class="zj" th:text="'￥'+${cartItem.totalPrice}" >￥22995.00</p></li>
+                            <li style="font-weight:bold"><p class="zj"  th:text="'￥'+${cartItem.totalPrice}">￥22995.00</p></li>
                             <li>
                                 <p>删除</p>
                             </li>
                         </ol>
                     </div>
                 </li>
-
 
             </ul>
         </div>
@@ -129,7 +136,7 @@
                 </ul>
             </div>
             <div>
-                 <font style="color:#e64346;font-weight:bold;" class="sumNum"> </font>&nbsp;
+                <font style="color:#e64346;font-weight:bold;" class="sumNum"> </font>&nbsp;
 
                 <ul>
                     <li><img src="img/buyNumleft.png" alt=""></li>
@@ -138,7 +145,7 @@
             </div>
             <div>
                 <ol>
-                    <li>总价:<span style="color:#e64346;font-weight:bold;font-size:16px;" th:text="${cartVo.totalPrice}" class="fnt">￥0.00</span>  </li>
+                    <li>总价:<span style="color:#e64346;font-weight:bold;font-size:16px;" class="fnt" th:text="${cartVo.totalPrice}">￥0.00</span>  </li>
 
                 </ol>
             </div>
@@ -158,7 +165,7 @@
                 <li>删除商品？</li>
                 <li>您可以选择移到关注，或删除商品。</li>
             </dd>
-            </dl>
+        </dl>
     </div>
     <div>
         <button type="button">删除</button>
@@ -185,7 +192,7 @@
                 <li>移到关注</li>
                 <li>移动后选中商品将不再购物车中显示</li>
             </dd>
-            </dl>
+        </dl>
     </div>
     <div>
         <button type="button">确定</button>
@@ -204,24 +211,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!--底部-->
 
 <div class="one_footer">
@@ -231,29 +220,26 @@
 <script src="./js/index.js" charset="utf-8"></script>
 <script type="text/javascript">
 
-     function toTrade(){
-         window.location.href="http://cart.gmall.com/toTrade";
+    function toTrade(){
+        window.location.href="http://order.gmall.com:8281/toTrade";
     }
     function toItem(skuId) {
-        window.location.href="http://item.gmall.com/"+skuId+".html";
+        window.location.href="http://item.gmall.com:8077/"+skuId+".html";
     }
 
     function login(){
-      var s = encodeURIComponent("http://cart.gmall.com:8095/cartList");
-       window.location.href="http://www.gmallsso.com:8110/login?originUrl="+s;
+        var s = encodeURIComponent("http://cart.gmall.com:8095/cartList");
+        window.location.href="http://www.gmallsso.com:8110/login?originUrl="+s;
     }
 
-    function checkSku( chkbox){
-        console.log($(chkbox));
-       var skuId= $(chkbox).attr("value");
-       var checked=$(chkbox).prop("checked");
-       var isCheckedFlag="0";
-       if(checked){
-           isCheckedFlag="1";
-       }
-        var param="isChecked="+isCheckedFlag+"&"+"skuId="+skuId;
-        console.log(param);
-        $.post("checkCart",param,function (data) {
+    function checkSku( skuId,_this){
+        var skuId= skuId;
+        var checked=$(_this).prop("checked");
+        var param = {
+            checkFlag: checked,
+            skuId: skuId
+        }
+        $.post("checkItem",param,function (data) {
             sumSumPrice();
         });
 
@@ -261,14 +247,14 @@
 
 
 
-/*    //购物车结算固定定位
-    $(document).scroll(function(){
-        if($(window).scrollTop()>50){
-            $(".fix").hide();
-        }else{
-            $(".fix").show();
-        }
-    })*/
+    /*    //购物车结算固定定位
+        $(document).scroll(function(){
+            if($(window).scrollTop()>50){
+                $(".fix").hide();
+            }else{
+                $(".fix").show();
+            }
+        })*/
 
 
     //购物车顶端tab
@@ -434,19 +420,19 @@
         // })
         //var that=$(this);
         //确定删除
-  /*      $(".One_isDel>div:last-child button:first-child").click(function(){
-            $(".One_mb").hide();    //蒙版隐藏
-            $(".One_isDel").hide(); //删除弹框隐藏
-            $(".check:checked").parent().parent().parent().parent().remove();  //删除选中商品
-            if($(".fix").offset().top>$(".fix1").offset().top){
-                $(".fix").hide();
-            }
-            if($(".check").length==0){
-                $(".allCheck").prop("checked",false);
-                $(".sumNum").html("0");
-                $(".fnt").html("￥ 0.00");
-            }
-        })*/
+        /*      $(".One_isDel>div:last-child button:first-child").click(function(){
+                  $(".One_mb").hide();    //蒙版隐藏
+                  $(".One_isDel").hide(); //删除弹框隐藏
+                  $(".check:checked").parent().parent().parent().parent().remove();  //删除选中商品
+                  if($(".fix").offset().top>$(".fix1").offset().top){
+                      $(".fix").hide();
+                  }
+                  if($(".check").length==0){
+                      $(".allCheck").prop("checked",false);
+                      $(".sumNum").html("0");
+                      $(".fnt").html("￥ 0.00");
+                  }
+              })*/
     })
     //确定删除弹框移入我的关注
     $(".One_isDel>div:last-child button:last-child").click(function(){
@@ -571,30 +557,30 @@
         $(".One_isDel").show();
         var that=$(this);
         //确定删除
-/*        $(".One_isDel>div:last-child button:first-child").click(function(){
-            $(".One_mb").hide();
-            $(".One_isDel").hide();
-            that.parent().parent().parent().parent().remove();
-            // 移除结账固定定位
-            // if($(".check").length==1){
-            // 	$(".fix").remove();
-            // }
+        /*        $(".One_isDel>div:last-child button:first-child").click(function(){
+                    $(".One_mb").hide();
+                    $(".One_isDel").hide();
+                    that.parent().parent().parent().parent().remove();
+                    // 移除结账固定定位
+                    // if($(".check").length==1){
+                    // 	$(".fix").remove();
+                    // }
+                    if($(".fix").offset().top>$(".fix1").offset().top){
+                        $(".fix").hide();
+                    }
+                    if($(".check").length==0){
+                        $(".allCheck").prop("checked",false);
+                        $(".sumNum").html("0");
+                        $(".fnt").html("￥ 0.00");
+                    }
+                })*/
+    })
+    /*    //页面滚动删除去结算固定定位隐藏
+        $(document).scroll(function(){
             if($(".fix").offset().top>$(".fix1").offset().top){
                 $(".fix").hide();
             }
-            if($(".check").length==0){
-                $(".allCheck").prop("checked",false);
-                $(".sumNum").html("0");
-                $(".fnt").html("￥ 0.00");
-            }
         })*/
-    })
-/*    //页面滚动删除去结算固定定位隐藏
-    $(document).scroll(function(){
-        if($(".fix").offset().top>$(".fix1").offset().top){
-            $(".fix").hide();
-        }
-    })*/
     $(".One_isDel>div:last-child button").mouseover(function(){
         $(this).css("cursor","pointer");
     })
@@ -621,10 +607,10 @@
             $(".fnt").html("￥"+zzj+".00")
         })
 
-/*        $(".One_ShopCon ul li>div:nth-child(2) ol li:nth-child(5) .zj").each(function(){
-            kong+=parseFloat($(this).html().substring(1))
-        })
-        $(".fnt").html("￥"+kong+".00")*/
+        /*        $(".One_ShopCon ul li>div:nth-child(2) ol li:nth-child(5) .zj").each(function(){
+                    kong+=parseFloat($(this).html().substring(1))
+                })
+                $(".fnt").html("￥"+kong+".00")*/
     }
     //封装总数量函数
     function sumSumNum(){

@@ -10,6 +10,7 @@ import constant.CookieConstant;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import utils.CookieUtils;
 
 import javax.servlet.http.Cookie;
@@ -24,7 +25,30 @@ public class CartController {
     @Reference
     CartService cartService;
 
+   @LoginRequired(needLogin = false)
+   @ResponseBody
+   @RequestMapping("checkItem")
+   public  String checkItem(Integer skuId,Boolean checkFlag,HttpServletRequest request){
+       Map<String,Object> userInfo = (Map<String, Object>) request.getAttribute(CookieConstant.LOGIN_USER_INFO_KEY);
+       String tempCartKey = CookieUtils.getCookieValue(request, CookieConstant.COOKIE_CART_KEY);
+       boolean loginFlag=userInfo==null?false:true;
+       int userId=0;
 
+       userId=Integer.parseInt(userInfo.get("id").toString());
+       cartService.checkItem(skuId,checkFlag,tempCartKey,userId,loginFlag);
+       return  "ok";
+   }
+
+
+
+
+
+    /**
+     * 查询购物车的数据
+     * @param request
+     * @param response
+     * @return
+     */
     @LoginRequired(needLogin = false)
     @RequestMapping("/cartList")
     public String  cartInfoPage(HttpServletRequest request,HttpServletResponse response){
